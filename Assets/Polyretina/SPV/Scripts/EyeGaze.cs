@@ -31,7 +31,17 @@ namespace LNE.ProstheticVision
 				var plane = new Plane(-camera.transform.forward, camera.transform.forward);
 
 				// looking direction (start from camera with camera normal as vec3(0, 0, 1))
-				SRanipal_Eye_v2.GetGazeRay(GazeIndex.RIGHT, out Vector3 origin, out Vector3 dir);
+				var dir = new Vector3(0, 0, 1);
+
+				try
+				{
+					SRanipal_Eye_v2.GetGazeRay(GazeIndex.RIGHT, out Vector3 origin, out dir);
+				}
+				catch 
+				{
+					dir = new Vector3(0, 0, 1);
+				}
+
 				var direction = new Ray(camera.transform.position, camera.transform.rotation * dir);
 
 				// THIS

@@ -131,7 +131,7 @@ namespace LNE.ProstheticVision
 			return pixel;
 		}
 
-		private static T LoadAsset<T>(string filter) where T : UnityEngine.Object
+		private static T LoadAsset<T>(string filter) where T : Object
 		{
 			filter = (filter ?? "") + $" t:{typeof(T).Name}";
 
@@ -145,7 +145,7 @@ namespace LNE.ProstheticVision
 			return asset;
 		}
 
-		private static void SaveAsset(UnityEngine.Object asset, string path)
+		private static void SaveAsset(Object asset, string path)
 		{
 			AssetDatabase.CreateAsset(asset, path);
 			AssetDatabase.SaveAssets();
