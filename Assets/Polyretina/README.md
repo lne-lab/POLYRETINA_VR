@@ -2,11 +2,11 @@
 
 ## Common
 
-Assets not specific to the Polyretina-VR project, but provide useful commonly-used functions (i.e., mathematical functions).
+Assets not specific to the Polyretina-VR project, but provide commonly-used functions (i.e., mathematical functions).
 
 ## SPV
 
-Assets related to the simulated of prosthetic vision.
+Assets related to the simulation of prosthetic vision.
 
 ## Studies
 
