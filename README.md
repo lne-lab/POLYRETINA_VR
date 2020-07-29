@@ -53,6 +53,3 @@ You can view the original files by clicking the "Select" button at the bottom of
 ![Kitchen](https://github.com/lne-lab/polyretina_vr/blob/master/Images/kitchen.png)
 ![Street](https://github.com/lne-lab/polyretina_vr/blob/master/Images/street.png)
 
-## In-Depth Description
-
-Coming soon...
