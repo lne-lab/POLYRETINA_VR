@@ -51,13 +51,24 @@
 	 * Functions
 	 */
 
+	// clipping ends the processing of a pixel, thus increasing efficiency
+	// we can safely clip a lot of the screen because the polyretina will always be in a determined spot with a determined size and all other pixels are black
+	// however, we cannot simply clip outside of the polyretina because of the axonal tails
+	// this function clips outside of the polyretina + the range of the axonal tails using some tested numbers.
 	void clip_polyretina(float2 uv)
 	{
-		// add a buffer to allow tails outside of the polyretina
-		// add an offset to the buffer because tails are longer on the right of the optic disc
-		clip((_polyretina_radius + FOV_BUFFER) - distance(pixel_to_retina(uv, _headset_diameter), FOV_BUFFER_OFFSET));
+		float clip_radius = _polyretina_radius + FOV_BUFFER;
+		float2 pixel = pixel_to_retina(uv, _headset_diameter);
+		float pixel_dist = distance(pixel, FOV_BUFFER_OFFSET);
+		
+		// clips pixel if given a negative number (i.e., if the distance to the pixel is greater than the polyretina radius)
+		clip(clip_radius - pixel_dist);
 	}
 
+	// The following functions make us of equations from:
+	// Jansonius et al, 2009, "A mathematical description of nerve fiber bundle trajectories and their variability in the human retina"
+	// Beyeler et al 2018, "A model of ganglion axon pathways accounts for percepts elicited by retinal implants"
+	
 	float calculate_phi(float phi0, float rho, float b, float c)
 	{
 		return phi0 + b * pow(rho - 4.0, c);
