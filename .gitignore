@@ -83,3 +83,21 @@ crashlytics-build.properties
 # Future studies
 /[Aa]ssets/Polyretina/Studies/Augmented/
 /[Aa]ssets/Polyretina/Studies/Augmented.meta
+
+# Copyrighted assets
+/[Aa]ssets/FoveUnityPlugin/
+/[Aa]ssets/FoveUnityPlugin.meta
+/[Aa]ssets/ViveSR/
+/[Aa]ssets/ViveSR.meta
+/[Aa]ssets/Polyretina/SPV/Demos/Objects/Models/
+/[Aa]ssets/Polyretina/SPV/Demos/Objects/Models.meta
+/[Aa]ssets/Polyretina/SPV/Demos/Objects/Prefabs/
+/[Aa]ssets/Polyretina/SPV/Demos/Objects/Prefabs.meta
+/[Aa]ssets/Polyretina/Studies/Common/Models/
+/[Aa]ssets/Polyretina/Studies/Common/Models.meta
+/[Aa]ssets/Polyretina/Studies/Common/Prefabs/
+/[Aa]ssets/Polyretina/Studies/Common/Prefabs.meta
+/[Aa]ssets/Polyretina/Studies/Objects/
+/[Aa]ssets/Polyretina/Studies/Objects.meta
+/[Aa]ssets/Polyretina/Studies/Street/
+/[Aa]ssets/Polyretina/Studies/Street.meta
