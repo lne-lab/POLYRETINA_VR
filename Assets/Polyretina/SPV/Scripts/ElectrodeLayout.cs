@@ -12,7 +12,9 @@ namespace LNE.ProstheticVision
 		_80x120,
 		_100x150,
 
-		_80x150
+		_80x150,
+
+		_225x575
 	}
 
 	public enum LayoutUsage
@@ -34,6 +36,8 @@ namespace LNE.ProstheticVision
 
 				case ElectrodeLayout._80x150: return new[] { 80f, 150f };
 
+				case ElectrodeLayout._225x575: return new[] { 225f, 575f };
+
 				default: throw new Exception();
 			}
 		}
@@ -48,6 +52,8 @@ namespace LNE.ProstheticVision
 				case ElectrodeLayout._100x150: return new[] { 100f * ( 136f / 150f), 136f };
 
 				case ElectrodeLayout._80x150: return new[] { 80f * (136f / 150f), 136f };
+
+				case ElectrodeLayout._225x575: return new[] { 225f, 575f };
 
 				default: throw new Exception();
 			}

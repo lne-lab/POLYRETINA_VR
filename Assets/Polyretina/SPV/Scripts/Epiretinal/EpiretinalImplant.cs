@@ -3,7 +3,6 @@
 namespace LNE.ProstheticVision
 {
 	using PostProcessing;
-
 	using SP = ShaderProperties;
 
 	[CreateAssetMenu(fileName = "Epiretinal Implant", menuName = "LNE/Implants/Epiretinal Implant")]
@@ -103,7 +102,7 @@ namespace LNE.ProstheticVision
 
 			// create texture for the fading data
 			fadeRT = new DoubleBufferedRenderTexture(headset.GetWidth(), headset.GetHeight());
-			fadeRT.Initialise(new Color(1, .5f, 0, 1));
+			fadeRT.Initialise(new Color(1, 0, 0, 0));
 
 			// overrides
 			if (overrideCameraFOV)
@@ -181,7 +180,7 @@ namespace LNE.ProstheticVision
 			tailBlr.SetVector(SP.headsetDiameter, headsetDiameter);
 
 			// electrode radius
-			phosMRT.SetFloat(SP.electrodeRadius, layout.GetRadius(LayoutUsage.Theoretical));
+			phosMRT.SetFloat(SP.electrodeRadius, layout.GetRadius(LayoutUsage.Anatomical));
 
 			// implant radius
 			var implantRadius = CoordinateSystem.FovToRetinalRadius(fieldOfView);
@@ -253,28 +252,41 @@ namespace LNE.ProstheticVision
 			}
 		}
 
-		public void UpdateFadingParameters(float fastDecayRate, float slowDecayRate, float decayExponent, float recoveryTime, float recoveryExponent)
-		{
-			// decay parameters
-			phosMRT.SetFloat("_fast_decay_rate", fastDecayRate);
-			phosMRT.SetFloat("_slow_decay_rate", slowDecayRate);
-			phosMRT.SetFloat("_decay_exponent", decayExponent);
+		//public void UpdateFadingParameters(int frequency, float t1, float t2, float threshold)
+		//{
+		//	// decay parameters
+		//	phosMRT.SetFloat($"_t1_{frequency}", t1);
+		//	phosMRT.SetFloat($"_t2_{frequency}", t2);
+		//	phosMRT.SetFloat($"_th_{frequency}", threshold);
+		//}
 
-			// recovery parameters
-			phosMRT.SetFloat("_recovery_time", recoveryTime);
-			phosMRT.SetFloat("_recovery_exponent", recoveryExponent);
+		//public void UpdateFadingParameters(float recoveryTime, float recoveryExponent)
+		//{
+		//	// recovery parameters
+		//	phosMRT.SetFloat("_recovery_time", recoveryTime);
+		//	phosMRT.SetFloat("_recovery_exponent", recoveryExponent);
+		//}
+
+		public void UpdateDecayParameters(float fastTime, float slowTime, float threshold)
+		{
+			phosMRT.SetFloat("_fast_decay_time", fastTime);
+			phosMRT.SetFloat("_slow_decay_time", slowTime);
+			phosMRT.SetFloat("_decay_threshold", threshold);
+
+			phosMRT.SetFloat("_fast_decay_rate", (1 / fastTime) * (1 - threshold));
+			phosMRT.SetFloat("_slow_decay_rate", (1 / slowTime) * threshold);
 		}
 
-		public void UpdateFadingParameters_v2(float t1, float t2, float threshold, float recoveryTime, float recoveryExponent)
+		public void UpdateRecoveryParameters(float delay, float time, float exponent)
 		{
-			// decay parameters
-			phosMRT.SetFloat("_t1", t1);
-			phosMRT.SetFloat("_t2", t2);
-			phosMRT.SetFloat("_threshold", threshold);
+			phosMRT.SetFloat("_recovery_delay", delay);
+			phosMRT.SetFloat("_recovery_time", time);
+			phosMRT.SetFloat("_recovery_exponent", exponent);
+		}
 
-			// recovery parameters
-			phosMRT.SetFloat("_recovery_time", recoveryTime);
-			phosMRT.SetFloat("_recovery_exponent", recoveryExponent);
+		public void ResetFadingParameters()
+		{
+			fadeRT.Initialise(new Color(1, 2, 79.1974f, .5f));
 		}
 
 		/*

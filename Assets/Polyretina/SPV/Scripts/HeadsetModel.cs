@@ -73,7 +73,7 @@ namespace LNE.ProstheticVision
 				case HeadsetModel.Fove:		return 70;
 				case HeadsetModel.VivePro:	return 90;
 
-				case HeadsetModel.None60:	return 90;
+				case HeadsetModel.None60:	return 90;	// this should be 100
 				case HeadsetModel.None120:	return 100;
 
 				case HeadsetModel.FHD60:	return 100;

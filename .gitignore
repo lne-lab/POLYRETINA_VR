@@ -74,6 +74,9 @@ crashlytics-build.properties
 # Polyretina VR
 #
 
+# Unwanted meta files
+*.md.meta
+
 # Auxiliary folders
 /[Aa]ssets/LSL4Unity/
 /[Aa]ssets/LSL4Unity.meta

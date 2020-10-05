@@ -315,7 +315,7 @@ namespace LNE.Studies
 				);
 			}
 
-			csvObj.SaveAs(_savePath + _id.ToString() + "_" + System.DateTime.Now.ToString("dd-MM-yyy_hh-mm-ss") + ".csv");
+			csvObj.Save(_savePath + _id.ToString() + "_" + System.DateTime.Now.ToString("dd-MM-yyy_hh-mm-ss") + ".csv");
 		}
 	}
 

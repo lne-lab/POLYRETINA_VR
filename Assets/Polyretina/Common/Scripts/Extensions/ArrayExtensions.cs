@@ -40,6 +40,25 @@ namespace LNE.ArrayExts
 		/// <summary>
 		/// Create an array of experimental conditions from several factors
 		/// </summary>
+		public static T0[] CreateArray<T0, T1>(T1[] factor1, int repetitions, Func<T1, T0> func)
+		{
+			var result = new T0[factor1.Length * repetitions];
+
+			var i = 0;
+			foreach (var t1 in factor1)
+			{
+				for (int j = 0; j < repetitions; j++)
+				{
+					result[i++] = func(t1);
+				}
+			}
+
+			return result;
+		}
+
+		/// <summary>
+		/// Create an array of experimental conditions from several factors
+		/// </summary>
 		public static T0[] CreateArray<T0, T1, T2, T3>(T1[] factor1, T2[] factor2, T3[] factor3, int repetitions, Func<T1, T2, T3, T0> func)
 		{
 			var result = new T0[factor1.Length * factor2.Length * factor3.Length * repetitions];
@@ -88,6 +107,21 @@ namespace LNE.ArrayExts
 			}
 
 			return result;
+		}
+
+		public static T[] Copy<T>(this T[] that)
+		{
+			var from = 0;
+			var to = that.Length;
+
+			var retval = new T[to - from];
+
+			for (int i = 0; i < retval.Length; i++)
+			{
+				retval[i] = that[from + i];
+			}
+
+			return retval;
 		}
 
 		/*
@@ -402,6 +436,33 @@ namespace LNE.ArrayExts
 			}
 
 			return result.ToArray();
+		}
+
+		/// <summary>
+		/// Shift all elements
+		/// </summary>
+		public static T[] Shift<T>(this T[] that, int shifts)
+		{
+			var n = that.Length;
+
+			while (shifts < 0)
+			{
+				shifts += n;
+			}
+
+			var cached = that[shifts % n];
+
+			for (int i = 0; i < n; i++)
+			{
+				var from = i;
+				var to = (i + shifts) % n;
+
+				that[to] = that[from];
+			}
+
+			that[(n - 1 + shifts) % n] = cached;
+
+			return that;
 		}
 
 		/*

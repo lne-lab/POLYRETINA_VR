@@ -22,8 +22,16 @@ namespace LNE.ProstheticVision
 		[CustomLabel(label = "Type")]
 		public SaccadeType saccadeType = SaccadeType.None;
 
-		[CustomLabel(label = "Frequency")]
-		public int saccadeFrequency = 1;
+		//[CustomLabel(label = "Frequency")]
+		//public int saccadeFrequency = 1;
+
+		[CustomLabel(label = "Interval")]
+		public float saccadeInterval = 1;
+
+		[Header("Interruption")]
+
+		public float onTime;
+		public float offTime;
 
 		/*
 		 * Private fields
@@ -31,7 +39,7 @@ namespace LNE.ProstheticVision
 
 		private Material saccadeMaterial = null;
 
-		private int frameCount = 0;
+		//private int frameCount = 0;
 
 		/*
 		 * Private properties
@@ -61,13 +69,17 @@ namespace LNE.ProstheticVision
 			base.Update();
 
 			// update material properties
-			saccadeMaterial.SetInt("_type", (int)saccadeType);
-			saccadeMaterial.SetInt("_frequency", saccadeFrequency);
-			saccadeMaterial.SetInt("_frame_count", frameCount++);
+			saccadeMaterial.SetInt("_saccade_type", (int)saccadeType);
+			//saccadeMaterial.SetInt("_frequency", saccadeFrequency);
+			//saccadeMaterial.SetInt("_frame_count", frameCount++);
+			saccadeMaterial.SetFloat("_saccade_interval", saccadeInterval);
 
 			saccadeMaterial.SetVector("_headset_diameter", Implant.headset.GetRetinalDiameter());
 			saccadeMaterial.SetFloat("_electrode_pitch", Implant.layout.GetSpacing(LayoutUsage.Anatomical));
-			saccadeMaterial.SetInt("_pulse_frequency", Implant.onFrames + Implant.offFrames);
+			//saccadeMaterial.SetInt("_pulse_frequency", Implant.onFrames + Implant.offFrames);
+
+			saccadeMaterial.SetFloat("_interrupt_on_time", onTime);
+			saccadeMaterial.SetFloat("_interrupt_off_time", offTime);
 		}
 
 		public override void OnRenderImage(Texture source, RenderTexture destination)

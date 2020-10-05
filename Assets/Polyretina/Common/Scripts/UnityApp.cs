@@ -35,7 +35,7 @@ namespace LNE
 				{
 					var allBehaviours = GameObject.FindObjectsOfType<MonoBehaviour>();
 					var activeBehaviours = allBehaviours.Where(behaviour => behaviour.isActiveAndEnabled);
-					invoker = activeBehaviours[0];	// can bug when opening editor
+					invoker = activeBehaviours.Length > 0 ? activeBehaviours[0] : null;
 				}
 
 				return invoker;
@@ -76,7 +76,7 @@ namespace LNE
 		/// </summary>
 		public static Coroutine StartCoroutine(IEnumerator coroutine)
 		{
-			return Invoker.StartCoroutine(coroutine);
+			return Invoker?.StartCoroutine(coroutine);
 		}
 
 		/// <summary>

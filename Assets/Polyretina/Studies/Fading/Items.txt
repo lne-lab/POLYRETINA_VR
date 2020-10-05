@@ -1,0 +1,22 @@
+﻿plate
+bowl
+mug
+bottle
+saucepan
+book
+stapler
+headphones
+hat
+kettle
+
+rubiks cube
+pliers
+
+scissors
+cup
+dish
+jug
+glasses
+dumbell
+tin can
+camera

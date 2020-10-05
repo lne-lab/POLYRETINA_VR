@@ -83,7 +83,7 @@ namespace LNE.IO
 			cells.Add((x, y), val.ToString());
 		}
 
-		public void SaveAs(string path)
+		public void Save(string path)
 		{
 			File.WriteAllText(path, AsString);
 		}
