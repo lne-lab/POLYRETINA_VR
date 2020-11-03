@@ -2,6 +2,8 @@
 
 namespace LNE.ProstheticVision
 {
+	using LNE.UI.Attributes;
+
 	using PostProcessing;
 	using SP = ShaderProperties;
 
@@ -20,10 +22,10 @@ namespace LNE.ProstheticVision
 
 		[Header("Model")]
 		public ElectrodePattern pattern = ElectrodePattern.POLYRETINA;
-		public ElectrodeLayout layout = ElectrodeLayout._80x150;
-		public float fieldOfView =	46.3f;
+		public ElectrodeLayout layout = ElectrodeLayout._80x120;
+		public float fieldOfView =	45f;
 		public int onFrames = 1;
-		public int offFrames = 4;
+		public int offFrames = 17;
 
 		[Range(2, 16)]
 		public int luminanceLevels = 2;
@@ -49,6 +51,22 @@ namespace LNE.ProstheticVision
 
 		[Header("Fading")]
 		public bool useFading;
+
+		[Header("    Decay")]
+		[CustomLabel(label = "    τ1")]
+		public float decayT1 = .1f;
+		[CustomLabel(label = "    τ2")]
+		public float decayT2 = .3f;
+		[CustomLabel(label = "    Threshold")]
+		public float decayThreshold = .5f;
+
+		[Header("    Recovery")]
+		[CustomLabel(label = "    Delay")]
+		public float recoveryDelay = 2;
+		[CustomLabel(label = "    Time")]
+		public float recoveryTime = 2;
+		[CustomLabel(label = "    Exponent")]
+		public float recoveryExponent = 3;
 
 		[Header("Preprocessed Data")]
 		public EpiretinalData epiretinalData;
@@ -135,10 +153,82 @@ namespace LNE.ProstheticVision
 				return;
 			}
 
-			/*
-			 * Set shader propertes
-			 */
+			UpdatePerFrameData();
 
+#if UNITY_EDITOR
+			// update this every frame only while in the editor
+			UpdatePerChangeData();
+#endif
+		}
+
+		public override void GetDimensions(out int width, out int height)
+		{
+			width = headset.GetWidth();
+			height = headset.GetHeight();
+		}
+
+		public override void OnRenderImage(Texture source, RenderTexture destination)
+		{
+			if (phosMRT == null || tailBlr == null)
+			{
+				Debug.LogError($"{name} does not have a material.");
+				Graphics.Blit(source, destination);
+				return;
+			}
+
+			if (on)
+			{
+				var tempRT = RenderTexture.GetTemporary(headset.GetWidth(), headset.GetHeight());
+				Graphics.SetRenderTarget(new[] { tempRT.colorBuffer, fadeRT.Front.colorBuffer }, tempRT.depthBuffer);
+				Graphics.Blit(source, phosMRT);
+				Graphics.Blit(tempRT, destination, tailBlr);
+				RenderTexture.ReleaseTemporary(tempRT);
+
+				fadeRT.Swap();
+			}
+			else
+			{
+				Graphics.Blit(source, destination);
+			}
+		}
+
+		public void ResetFadingParameters()
+		{
+			fadeRT.Initialise(new Color(1, 0, 0, 0));
+		}
+
+		/*
+		 * Private methods
+		 */
+
+		private void UpdatePerFrameData()
+		{
+			if (offFrames > 0)
+			{
+				// pulse
+				phosMRT.SetInt(SP.pulse, Pulse ? 1 : 0);
+			}
+
+			if (useFading)
+			{
+				// fading (can safely be uploaded every frame because it is just a RenderTexture pointer)
+				phosMRT.SetTexture(SP.fadeTexture, fadeRT.Back);
+			}
+
+			if (eyeGazeSource != EyeGaze.Source.None)
+			{
+				// eye gaze
+				var eyeGaze = EyeGaze.Get(eyeGazeSource, headset);
+				phosMRT.SetVector(SP.eyeGaze, eyeGaze);
+				tailBlr.SetVector(SP.eyeGaze, eyeGaze);
+
+				// eye gaze delta
+				phosMRT.SetVector(SP.eyeGazeDelta, EyeGaze.GetDelta(eyeGazeSource, headset));
+			}
+		}
+
+		private void UpdatePerChangeData()
+		{
 			//
 			// textures are only updated when necessary for efficiencies sake
 			//
@@ -190,14 +280,14 @@ namespace LNE.ProstheticVision
 			phosMRT.SetFloat(SP.polyretinaRadius, implantRadius);
 			tailBlr.SetFloat(SP.polyretinaRadius, implantRadius);
 
-			// pulse
-			phosMRT.SetInt(SP.pulse, Pulse ? 1 : 0);
-
-			// levels
-			phosMRT.SetInt(SP.luminanceLevels, luminanceLevels);
-
 			// brightness
 			phosMRT.SetFloat(SP.brightness, brightness);
+
+			// luminance levels
+			phosMRT.SetInt(SP.luminanceLevels, luminanceLevels);
+
+			// luminance boost
+			phosMRT.SetFloat(SP.luminanceBoost, 1 - (luminanceBoost / luminanceLevels));
 
 			// variance
 			phosMRT.SetFloat(SP.sizeVariance, sizeVariance);
@@ -207,74 +297,18 @@ namespace LNE.ProstheticVision
 			// decay constant
 			tailBlr.SetFloat(SP.decayConst, tailLength);
 
-			// eye gaze
-			var eyeGaze = EyeGaze.Get(eyeGazeSource, headset);
-			phosMRT.SetVector(SP.eyeGaze, eyeGaze);
-			tailBlr.SetVector(SP.eyeGaze, eyeGaze);
+			// update decay/recovery fading parameters
+			UpdateDecayParameters(decayT1, decayT2, decayThreshold);
+			UpdateRecoveryParameters(recoveryDelay, recoveryTime, recoveryExponent);
 
 			// keywords
 			UpdateKeyword("USE_FADING", useFading);
 			UpdateKeyword("RT_TARGET", Prosthesis.Instance.Camera.targetTexture != null);
 			UpdateKeyword("OUTLINE", outlineDevice);
 			UpdateTailQuality();
-
-			// fading (can safely be uploaded every frame because it is just a RenderTexture pointer)
-			phosMRT.SetTexture(SP.fadeTexture, fadeRT.Back);
-
-			// eye gaze delta
-			phosMRT.SetVector(SP.eyeGazeDelta, EyeGaze.GetDelta(eyeGazeSource, headset));
-
-			// luminance boost
-			phosMRT.SetFloat(SP.luminanceBoost, luminanceBoost);
 		}
 
-		public override void GetDimensions(out int width, out int height)
-		{
-			width = headset.GetWidth();
-			height = headset.GetHeight();
-		}
-
-		public override void OnRenderImage(Texture source, RenderTexture destination)
-		{
-			if (phosMRT == null || tailBlr == null)
-			{
-				Debug.LogError($"{name} does not have a material.");
-				Graphics.Blit(source, destination);
-				return;
-			}
-
-			if (on)
-			{
-				var tempRT = RenderTexture.GetTemporary(headset.GetWidth(), headset.GetHeight());
-				Graphics.SetRenderTarget(new[] { tempRT.colorBuffer, fadeRT.Front.colorBuffer }, tempRT.depthBuffer);
-				Graphics.Blit(source, phosMRT);
-				Graphics.Blit(tempRT, destination, tailBlr);
-				RenderTexture.ReleaseTemporary(tempRT);
-
-				fadeRT.Swap();
-			}
-			else
-			{
-				Graphics.Blit(source, destination);
-			}
-		}
-
-		//public void UpdateFadingParameters(int frequency, float t1, float t2, float threshold)
-		//{
-		//	// decay parameters
-		//	phosMRT.SetFloat($"_t1_{frequency}", t1);
-		//	phosMRT.SetFloat($"_t2_{frequency}", t2);
-		//	phosMRT.SetFloat($"_th_{frequency}", threshold);
-		//}
-
-		//public void UpdateFadingParameters(float recoveryTime, float recoveryExponent)
-		//{
-		//	// recovery parameters
-		//	phosMRT.SetFloat("_recovery_time", recoveryTime);
-		//	phosMRT.SetFloat("_recovery_exponent", recoveryExponent);
-		//}
-
-		public void UpdateDecayParameters(float fastTime, float slowTime, float threshold)
+		private void UpdateDecayParameters(float fastTime, float slowTime, float threshold)
 		{
 			phosMRT.SetFloat("_fast_decay_time", fastTime);
 			phosMRT.SetFloat("_slow_decay_time", slowTime);
@@ -284,21 +318,12 @@ namespace LNE.ProstheticVision
 			phosMRT.SetFloat("_slow_decay_rate", (1 / slowTime) * threshold);
 		}
 
-		public void UpdateRecoveryParameters(float delay, float time, float exponent)
+		private void UpdateRecoveryParameters(float delay, float time, float exponent)
 		{
 			phosMRT.SetFloat("_recovery_delay", delay);
 			phosMRT.SetFloat("_recovery_time", time);
 			phosMRT.SetFloat("_recovery_exponent", exponent);
 		}
-
-		public void ResetFadingParameters()
-		{
-			fadeRT.Initialise(new Color(1, 2, 79.1974f, .5f));
-		}
-
-		/*
-		 * Private methods
-		 */
 
 		private void UpdateKeyword(string keyword, bool condition)
 		{

@@ -1,10 +1,9 @@
 ﻿using UnityEngine;
 
-namespace LSLTags
+namespace LNE.LabStreamingLayer.Tags
 {
-	using LNE;
-	using LNE.IO;
-	using LNE.UI.Attributes;
+	using IO;
+	using UI.Attributes;
 
 	public class TagLoader : Singleton<TagLoader>
 	{
@@ -12,6 +11,7 @@ namespace LSLTags
 		 * Editor fields
 		 */
 
+#pragma warning disable 649
 		[SerializeField, Path(isFile = true, isRelative = true)]
 		private string _path;
 
@@ -30,6 +30,7 @@ namespace LSLTags
 
 		[SerializeField]
 		private GameObject _noLabelTag;
+#pragma warning restore 649
 
 		/*
 		 * Private fields

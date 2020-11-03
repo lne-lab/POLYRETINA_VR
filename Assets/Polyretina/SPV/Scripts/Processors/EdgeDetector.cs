@@ -58,6 +58,8 @@ namespace LNE.ProstheticVision
 				return;
 			}
 
+#if UNITY_EDITOR
+			// update this every frame only while in the editor
 			UpdateSensitivity();
 
 			material.SetFloat(SP.edgeContrast, contrast);
@@ -66,6 +68,7 @@ namespace LNE.ProstheticVision
 
 			UpdateThickness();
 			material.SetFloat(SP.edgeThreshold, threshold);
+#endif
 		}
 
 		public override void GetDimensions(out int width, out int height)

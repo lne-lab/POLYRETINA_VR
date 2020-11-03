@@ -5,11 +5,41 @@ namespace LNE.UI
 {
 	public class GUIOptions
 	{
-		public GUIStyle style = null;
 		public int width = -1;
 		public int height = -1;
 		public int maxWidth = -1;
 		public int maxHeight = -1;
+
+		private GUIStyle _style;
+		public GUIStyle style
+		{
+			get => _style;
+			set => _style = new GUIStyle(value);
+		}
+
+		public Color? textColour
+		{
+			get => style != null ? style.normal.textColor : default;
+			set
+			{
+				if (style != null && value.HasValue)
+				{
+					style.normal.textColor = value.Value;
+				}
+			}
+		}
+
+		public int? textSize
+		{
+			get => style != null ? style.fontSize : default;
+			set
+			{
+				if (style != null && value.HasValue)
+				{
+					style.fontSize = value.Value;
+				}
+			}
+		}
 
 		public GUILayoutOption[] layout
 		{

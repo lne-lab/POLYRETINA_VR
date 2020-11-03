@@ -1,34 +1,38 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using UnityEngine;
-using LNE.UI.Attributes;
+﻿//using System.IO;
+//using UnityEngine;
 
-public class ConditionReconstruction : MonoBehaviour
-{
-	[SerializeField, Path(isFile = true)]
-	private string path;
+//namespace LNE.Studies.FadingV1
+//{
+//	using UI.Attributes;
 
-	private TrialData_Conditions[] trials;
-	private TrialData_Conditions trial;
+//	public class ConditionReconstruction : MonoBehaviour
+//	{
+//#pragma warning disable 649
+//		[SerializeField, Path(isFile = true)]
+//		private string path;
+//#pragma warning restore 649
 
-	void Start()
-	{
-		var json = File.ReadAllText(path);
-		trials = JsonUtility.FromJson<TestData_Conditions>(json).trials;
-	}
+//		private TrialData_Conditions[] trials;
+//		private TrialData_Conditions trial;
 
-	void OnGUI()
-	{
-		GUILayout.Space(25);
-		//GUILayout.Label("        / " + (trial.endtime - trial.startTime).ToString("N2"));
+//		void Start()
+//		{
+//			var json = File.ReadAllText(path);
+//			trials = JsonUtility.FromJson<TestData_Conditions>(json).trials;
+//		}
 
-		GUILayout.Space(25);
-		GUILayout.Label(trial.strategy.ToString());
-	}
+//		void OnGUI()
+//		{
+//			GUILayout.Space(25);
+//			//GUILayout.Label("        / " + (trial.endtime - trial.startTime).ToString("N2"));
 
-	public void SetCondition(int trialId)
-	{
-		trial = trials[trialId];
-	}
-}
+//			GUILayout.Space(25);
+//			GUILayout.Label(trial.strategy.ToString());
+//		}
+
+//		public void SetCondition(int trialId)
+//		{
+//			trial = trials[trialId];
+//		}
+//	}
+//}

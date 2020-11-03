@@ -1,22 +1,39 @@
-﻿
-namespace LSLTags
-{
-	using LNE;
-	using LSL;
+﻿using LSL;
 
+namespace LNE.LabStreamingLayer
+{
+	/// <summary>
+	/// Stream tags
+	/// </summary>
 	public class TagOutlet : Outlet<string>
 	{
+		/*
+		 * Private fields
+		 */
+
 		private string _label;
+
+		/*
+		 * Public properties
+		 */
 
 		public override string StreamType => "Tag";
 
 		public override int NumChannels => 1;
+
+		/*
+		 * Public methods
+		 */
 
 		public void PushSample(string label)
 		{
 			_label = label;
 			PushSample();
 		}
+
+		/*
+		 * Protected methods
+		 */
 
 		protected override void DefineMetaData(liblsl.StreamInfo info)
 		{

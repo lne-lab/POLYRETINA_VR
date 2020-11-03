@@ -1,10 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-namespace LSLTags
+namespace LNE.LabStreamingLayer.Tags
 {
-	using LNE;
-
 	public class TagControls : Singleton<TagControls>
 	{
 		void Update()

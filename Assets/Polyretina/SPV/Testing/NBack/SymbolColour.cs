@@ -1,21 +1,22 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class SymbolColour : MonoBehaviour
+namespace LNE.Testing.NBack
 {
-	public Color colour
+	public class SymbolColour : MonoBehaviour
 	{
-		get
+		public Color colour
 		{
-			return default;
-		}
-
-		set
-		{
-			foreach (var renderer in GetComponentsInChildren<Renderer>())
+			get
 			{
-				renderer.material.color = value;
+				return default;
+			}
+
+			set
+			{
+				foreach (var renderer in GetComponentsInChildren<Renderer>())
+				{
+					renderer.material.color = value;
+				}
 			}
 		}
 	}

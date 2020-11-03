@@ -3,7 +3,7 @@
 using UnityEngine;
 using LSL;
 
-namespace LNE
+namespace LNE.LabStreamingLayer
 {
 	public abstract class Outlet<T> : MonoBehaviour
 	{

@@ -167,11 +167,15 @@ namespace LNE.UI
 
 		public void PrefixLabel(GUIStyle style = null)
 		{
-			if (style != null)
-				EditorGUI.PrefixLabel(position, Label, style);
-			else
-				EditorGUI.PrefixLabel(position, Label);
+			PrefixLabel(Label, style);
+		}
 
+		public void PrefixLabel(GUIContent label, GUIStyle style = null)
+		{
+			if (style != null)
+				EditorGUI.PrefixLabel(position, label, style);
+			else
+				EditorGUI.PrefixLabel(position, label);
 		}
 
 		public Color SetColour(Color colour)

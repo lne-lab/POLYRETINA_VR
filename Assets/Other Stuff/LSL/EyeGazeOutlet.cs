@@ -3,12 +3,19 @@
 using UnityEngine;
 using LSL;
 
-namespace LNE
+namespace LNE.LabStreamingLayer
 {
 	using ProstheticVision;
 	
+	/// <summary>
+	/// Stream eye gaze
+	/// </summary>
 	public class EyeGazeOutlet : Outlet<float>
 	{
+		/*
+		 * Editor fields
+		 */
+
 		[Space]
 
 		[SerializeField]

@@ -3,8 +3,11 @@
 using UnityEngine;
 using LSL;
 
-namespace LNE
+namespace LNE.LabStreamingLayer
 {
+	/// <summary>
+	/// Stream a webcam 
+	/// </summary>
 	public class WebcamOutlet : Outlet<char>
 	{
 		/*

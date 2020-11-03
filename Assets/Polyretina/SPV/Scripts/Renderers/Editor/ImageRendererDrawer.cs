@@ -9,6 +9,7 @@ namespace LNE.ProstheticVision.UI
 	using Reflection;
 	using ReflectionExts;
 	using LNE.UI;
+	using LNE.UI.Attributes;
 
 	[CustomPropertyDrawer(typeof(ImageRenderer))]
 	public class ImageRendererDrawer : ExtendedPropertyDrawer
@@ -172,16 +173,17 @@ namespace LNE.ProstheticVision.UI
 			foreach (var field in objectType.GetFields(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public))
 			{
 				DrawDecorators(drawer, field);
+				var label = field.GetCustomAttribute<CustomLabelAttribute>()?.label;
 
 				drawer.position.y += drawer.FieldHeight;
 
 				if (field.FieldType == typeof(int))
 				{
-					DrawIntField(drawer, field);
+					DrawIntField(drawer, field, label);
 				}
 				else if (field.FieldType == typeof(float))
 				{
-					DrawFloatField(drawer, field);
+					DrawFloatField(drawer, field, label);
 				}
 				else if (field.FieldType == typeof(bool))
 				{
@@ -243,7 +245,7 @@ namespace LNE.ProstheticVision.UI
 			}
 		}
 
-		private static void DrawIntField(ExtendedPropertyDrawer drawer, FieldInfo field)
+		private static void DrawIntField(ExtendedPropertyDrawer drawer, FieldInfo field, string label = null)
 		{
 			var range = field.GetCustomAttribute<RangeAttribute>();
 			if (range != null)
@@ -252,7 +254,7 @@ namespace LNE.ProstheticVision.UI
 					objectReference,
 					EditorGUI.IntSlider(
 						drawer.position,
-						UnityApp.ToDisplayFormat(field.Name),
+						label ?? UnityApp.ToDisplayFormat(field.Name),
 						field.GetValue<int>(objectReference),
 						Mathf.RoundToInt(range.min),
 						Mathf.RoundToInt(range.max))
@@ -264,13 +266,13 @@ namespace LNE.ProstheticVision.UI
 					objectReference,
 					EditorGUI.IntField(
 						drawer.position,
-						UnityApp.ToDisplayFormat(field.Name),
+						label ?? UnityApp.ToDisplayFormat(field.Name),
 						field.GetValue<int>(objectReference))
 				);
 			}
 		}
 
-		private static void DrawFloatField(ExtendedPropertyDrawer drawer, FieldInfo field)
+		private static void DrawFloatField(ExtendedPropertyDrawer drawer, FieldInfo field, string label = null)
 		{
 			var range = field.GetCustomAttribute<RangeAttribute>();
 			if (range != null)
@@ -279,7 +281,7 @@ namespace LNE.ProstheticVision.UI
 					objectReference,
 					EditorGUI.Slider(
 						drawer.position,
-						UnityApp.ToDisplayFormat(field.Name),
+						label ?? UnityApp.ToDisplayFormat(field.Name),
 						field.GetValue<float>(objectReference),
 						range.min,
 						range.max)
@@ -291,7 +293,7 @@ namespace LNE.ProstheticVision.UI
 					objectReference,
 					EditorGUI.FloatField(
 						drawer.position,
-						UnityApp.ToDisplayFormat(field.Name),
+						label ?? UnityApp.ToDisplayFormat(field.Name),
 						field.GetValue<float>(objectReference))
 				);
 			}

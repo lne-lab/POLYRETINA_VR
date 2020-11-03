@@ -1,11 +1,12 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class Billboard : MonoBehaviour
+namespace LNE.Studies.FadingV1
 {
-    void Update()
+    public class Billboard : MonoBehaviour
     {
-        transform.forward = transform.position - Camera.main.transform.position;
+        void Update()
+        {
+            transform.forward = transform.position - Camera.main.transform.position;
+        }
     }
 }

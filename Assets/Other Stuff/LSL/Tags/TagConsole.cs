@@ -2,17 +2,18 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace LSLTags
+namespace LNE.LabStreamingLayer.Tags
 {
-	using LNE;
-	using LNE.ArrayExts;	
+	using ArrayExts;	
 
 	public class TagConsole : Singleton<TagConsole>
 	{
 		private const int MAX_LINES = 45;
 
+#pragma warning disable 649
 		[SerializeField]
 		private Text _console;
+#pragma warning restore 649
 
 		public void WriteLine(string tag)
 		{

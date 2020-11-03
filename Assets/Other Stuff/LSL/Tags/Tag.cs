@@ -1,10 +1,11 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-namespace LSLTags
+namespace LNE.LabStreamingLayer.Tags
 {
 	public class Tag : MonoBehaviour
 	{
+#pragma warning disable 649
 		[SerializeField]
 		private int _index;
 
@@ -22,6 +23,7 @@ namespace LSLTags
 
 		[SerializeField]
 		private Color _selectedColour;
+#pragma warning restore 649
 
 		public int index 
 		{

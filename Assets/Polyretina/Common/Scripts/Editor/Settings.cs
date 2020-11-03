@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using UnityEngine;
 using UnityEditor;
 
@@ -32,7 +33,31 @@ namespace LNE
 			}
 		}
 
-		public static bool VRInputSupport
+        public static string WirelessPath
+        {
+            get => EditorPrefs.GetString(nameof(WirelessPath), @"C:\Program Files\VIVE Wireless\ConnectionUtility\HtcConnectionUtility.exe");
+            set => EditorPrefs.SetString(nameof(WirelessPath), value);
+        }
+
+        public static string SteamPath
+        {
+            get => EditorPrefs.GetString(nameof(SteamPath), @"C:\Program Files (x86)\Steam\Steam.exe");
+            set => EditorPrefs.SetString(nameof(SteamPath), value);
+        }
+
+        public static string SteamVRPath
+        {
+            get => EditorPrefs.GetString(nameof(SteamVRPath), $@"C:\Users\{Environment.UserName}\Desktop\SteamVR.url");
+            set => EditorPrefs.SetString(nameof(SteamVRPath), value);
+        }
+
+        public static string SRanipalPath
+        {
+            get => EditorPrefs.GetString(nameof(SRanipalPath), $@"C:\Users\{Environment.UserName}\Desktop\SR_Runtime.lnk");
+            set => EditorPrefs.SetString(nameof(SRanipalPath), value);
+        }
+
+        public static bool VRInputSupport
 		{
 			get => EditorPrefs.GetBool(nameof(VRInputSupport), false);
 

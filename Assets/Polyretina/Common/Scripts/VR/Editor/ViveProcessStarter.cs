@@ -40,25 +40,25 @@ namespace LNE.VR.UI
 		[MenuItem("Polyretina/Vive Pro Eye/Start Vive Wireless", priority = WindowPriority.viveStartWireless)]
 		static void StartViveWireless()
 		{
-			StartProcess(WIRELESS, WIRELESS_PATH, true, "Vive Wireless is already running.");
+			StartProcess(WIRELESS, Settings.WirelessPath, true, "Vive Wireless is already running.");
 		}
 
 		[MenuItem("Polyretina/Vive Pro Eye/Start Steam", priority = WindowPriority.viveStartSteam)]
 		static void StartSteam()
 		{
-			StartProcess(STEAM, STEAM_PATH, true, "Steam is already running.");
+			StartProcess(STEAM, Settings.SteamPath, true, "Steam is already running.");
 		}
 
 		[MenuItem("Polyretina/Vive Pro Eye/Start SteamVR", priority = WindowPriority.viveStartSteamVR)]
 		static void StartSteamVR()
 		{
-			StartProcess(STEAM_VR, STEAM_VR_PATH, true, "SteamVR is already running.");
+			StartProcess(STEAM_VR, Settings.SteamVRPath, true, "SteamVR is already running.");
 		}
 
 		[MenuItem("Polyretina/Vive Pro Eye/Start Eye Tracking", priority = WindowPriority.viveStartEyeTracking)]
 		static void StartEyeTracking()
 		{
-			StartProcess(SRANIPAL, SRANIPAL_PATH, true, "Eye Tracking is already running.");
+			StartProcess(SRANIPAL, Settings.SRanipalPath, true, "Eye Tracking is already running.");
 		}
 
 		private static void StartProcess(string name, string path, bool displayDialog, string dialogMessage)
@@ -90,7 +90,14 @@ namespace LNE.VR.UI
 
 		private static void Run(string processPath)
 		{
-			Process.Start(processPath);
+			try
+			{
+				Process.Start(processPath);
+			}
+			catch
+			{
+				EditorUtility.DisplayDialog("LNE - Message", $"The file \"{processPath}\" could not be found.", "OK");
+			}
 		}
 	}
 }

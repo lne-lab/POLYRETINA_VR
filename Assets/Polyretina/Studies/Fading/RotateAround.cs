@@ -1,14 +1,17 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class RotateAround : MonoBehaviour
+namespace LNE.Studies.FadingV1
 {
-	[SerializeField]
-	private Transform target;
-
-	public void Rotate(float angle)
+	public class RotateAround : MonoBehaviour
 	{
-		transform.RotateAround(target.position, Vector3.up, angle);
+#pragma warning disable 649
+		[SerializeField]
+		private Transform target;
+#pragma warning restore 649
+
+		public void Rotate(float angle)
+		{
+			transform.RotateAround(target.position, Vector3.up, angle);
+		}
 	}
 }

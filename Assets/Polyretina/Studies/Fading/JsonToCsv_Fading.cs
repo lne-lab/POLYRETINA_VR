@@ -1,121 +1,125 @@
-﻿#if UNITY_EDITOR
-using System.Collections.Generic;
-using System.IO;
-using UnityEngine;
-using UnityEditor;
-using LNE.IO;
-using System.Linq;
+﻿//#if UNITY_EDITOR
 
-public class JsonToCsv_Fading : MonoBehaviour
-{
-	[MenuItem("Polyretina/Fading Study/Json To CSV 1")]
-	static void Run1()
-	{
-		var path = EditorUtility.OpenFilePanel("Select json file", "", "json");
-		var json = File.ReadAllText(path);
-		var data = JsonUtility.FromJson<TestData_Rotation>(json);
+//using System.Collections.Generic;
+//using System.IO;
+//using UnityEngine;
+//using UnityEditor;
 
-		var tuples = new List<(int, float)>();
+//namespace LNE.Studies.FadingV1
+//{
+//	using IO;
 
-		var startTime = 0f;
-		for (int i = 0; i < data.frames.Length; i++)
-		{
-			var lastFrame = i > 0 ? data.frames[i - 1] : null;
-			var thisFrame = data.frames[i];
-			var nextFrame = i < (data.frames.Length - 1) ? data.frames[i + 1] : null;
+//	public class JsonToCsv_Fading : MonoBehaviour
+//	{
+//		[MenuItem("Polyretina/Fading Study/Json To CSV 1")]
+//		static void Run1()
+//		{
+//			var path = EditorUtility.OpenFilePanel("Select json file", "", "json");
+//			var json = File.ReadAllText(path);
+//			var data = JsonUtility.FromJson<TestData_Rotation>(json);
 
-			var lastTrial = lastFrame != null ? lastFrame.trialId : -1;
-			var nextTrial = nextFrame != null ? nextFrame.trialId : -1;
+//			var tuples = new List<(int, float)>();
 
-			if (thisFrame.trialId != lastTrial)
-			{
-				startTime = thisFrame.time;
-			}
+//			var startTime = 0f;
+//			for (int i = 0; i < data.frames.Length; i++)
+//			{
+//				var lastFrame = i > 0 ? data.frames[i - 1] : null;
+//				var thisFrame = data.frames[i];
+//				var nextFrame = i < (data.frames.Length - 1) ? data.frames[i + 1] : null;
 
-			if (thisFrame.trialId != nextTrial)
-			{
-				var timeElapsed = thisFrame.time - startTime;
-				tuples.Add((thisFrame.trialId, timeElapsed));
-			}
-		}
+//				var lastTrial = lastFrame != null ? lastFrame.trialId : -1;
+//				var nextTrial = nextFrame != null ? nextFrame.trialId : -1;
 
-		var csv = new CSV();
-		csv.AppendRow("trial", "elapsed");
+//				if (thisFrame.trialId != lastTrial)
+//				{
+//					startTime = thisFrame.time;
+//				}
 
-		foreach (var tuple in tuples)
-		{
-			csv.AppendRow(tuple.Item1, tuple.Item2);
-		}
+//				if (thisFrame.trialId != nextTrial)
+//				{
+//					var timeElapsed = thisFrame.time - startTime;
+//					tuples.Add((thisFrame.trialId, timeElapsed));
+//				}
+//			}
 
-		csv.Save(path.Replace(".json", ".csv"));
-	}
+//			var csv = new CSV();
+//			csv.AppendRow("trial", "elapsed");
 
-	[MenuItem("Polyretina/Fading Study/Json To CSV 2")]
-	static void Run2()
-	{
-		var path = EditorUtility.OpenFilePanel("Select json file", "", "json");
-		var json = File.ReadAllText(path);
-		var data = JsonUtility.FromJson<TestData_Rotation>(json);
+//			foreach (var tuple in tuples)
+//			{
+//				csv.AppendRow(tuple.Item1, tuple.Item2);
+//			}
 
-		var csv = new CSV();
-		csv.AppendRow("participant", "trial", "time", "px", "py", "pz", "rx", "ry", "rz", "rw");
+//			csv.Save(path.Replace(".json", ".csv"));
+//		}
 
-		foreach (var frame in data.frames)
-		{
-			csv.AppendRow(
-				frame.participant,
-				frame.trialId,
-				frame.time,
-				frame.px,
-				frame.py,
-				frame.pz,
-				frame.rx,
-				frame.ry,
-				frame.rz,
-				frame.rw
-			);
-		}
+//		[MenuItem("Polyretina/Fading Study/Json To CSV 2")]
+//		static void Run2()
+//		{
+//			var path = EditorUtility.OpenFilePanel("Select json file", "", "json");
+//			var json = File.ReadAllText(path);
+//			var data = JsonUtility.FromJson<TestData_Rotation>(json);
 
-		csv.SaveWStream(path.Replace(".json", ".csv"));
-	}
+//			var csv = new CSV();
+//			csv.AppendRow("participant", "trial", "time", "px", "py", "pz", "rx", "ry", "rz", "rw");
 
-	[MenuItem("Polyretina/Fading Study/Calc Diff")]
-	static void Run3()
-	{
-		var path = EditorUtility.OpenFilePanel("Select json file", "", "csv");
-		var csv = new CSV();
-		csv.LoadWStream(path);
+//			foreach (var frame in data.frames)
+//			{
+//				csv.AppendRow(
+//					frame.participant,
+//					frame.trialId,
+//					frame.time,
+//					frame.px,
+//					frame.py,
+//					frame.pz,
+//					frame.rx,
+//					frame.ry,
+//					frame.rz,
+//					frame.rw
+//				);
+//			}
 
-		var xs = csv.GetColumn("rx", false);
-		var ys = csv.GetColumn("ry", false);
-		var zs = csv.GetColumn("rz", false);
-		var ws = csv.GetColumn("rw", false);
+//			csv.SaveWStream(path.Replace(".json", ".csv"));
+//		}
 
-		var ds = new List<float>();
-		ds.Add(0);	// title
+//		[MenuItem("Polyretina/Fading Study/Calc Diff")]
+//		static void Run3()
+//		{
+//			var path = EditorUtility.OpenFilePanel("Select json file", "", "csv");
+//			var csv = new CSV();
+//			csv.LoadWStream(path);
 
-		for (int i = 0; i + 1 < xs.Length && float.TryParse(xs[i + 1], out _); i++)
-		{
-			var a = new Quaternion(
-				float.Parse(xs[i]),
-				float.Parse(ys[i]),
-				float.Parse(zs[i]),
-				float.Parse(ws[i])
-			);
+//			var xs = csv.GetColumn("rx", false);
+//			var ys = csv.GetColumn("ry", false);
+//			var zs = csv.GetColumn("rz", false);
+//			var ws = csv.GetColumn("rw", false);
 
-			var b = new Quaternion(
-				float.Parse(xs[i + 1]),
-				float.Parse(ys[i + 1]),
-				float.Parse(zs[i + 1]),
-				float.Parse(ws[i + 1])
-			);
+//			var ds = new List<float>();
+//			ds.Add(0);  // title
 
-			var d = Quaternion.Angle(a, b);
-			ds.Add(d);
-		}
+//			for (int i = 0; i + 1 < xs.Length && float.TryParse(xs[i + 1], out _); i++)
+//			{
+//				var a = new Quaternion(
+//					float.Parse(xs[i]),
+//					float.Parse(ys[i]),
+//					float.Parse(zs[i]),
+//					float.Parse(ws[i])
+//				);
 
-		//csv.AppendColumn(ds.ToArray().Cast<object>().ToArray());
-		//csv.SaveWStream(path.Replace(".csv", "-diff.csv"));
-	}
-}
-#endif
+//				var b = new Quaternion(
+//					float.Parse(xs[i + 1]),
+//					float.Parse(ys[i + 1]),
+//					float.Parse(zs[i + 1]),
+//					float.Parse(ws[i + 1])
+//				);
+
+//				var d = Quaternion.Angle(a, b);
+//				ds.Add(d);
+//			}
+
+//			//csv.AppendColumn(ds.ToArray().Cast<object>().ToArray());
+//			//csv.SaveWStream(path.Replace(".csv", "-diff.csv"));
+//		}
+//	}
+//}
+//#endif

@@ -2,7 +2,7 @@
 using System.Linq;
 using UnityEngine;
 
-namespace LNE.Testing
+namespace LNE.Testing.NBack
 {
 	using ArrayExts;
 	using IO;
@@ -13,6 +13,7 @@ namespace LNE.Testing
 		 * Editor fields
 		 */
 
+#pragma warning disable 649
 		[SerializeField]
 		private int _n;
 
@@ -33,6 +34,7 @@ namespace LNE.Testing
 
 		[SerializeField]
 		private GameObject[] _objects;
+#pragma warning restore 649
 
 		/*
 		 * Private fields
