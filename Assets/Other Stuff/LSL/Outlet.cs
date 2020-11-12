@@ -29,6 +29,8 @@ namespace LNE.LabStreamingLayer
 
 		private T[] data;
 
+		private const int VARIABLE_SRATE = 0;
+
 		/*
 		 * Private properties
 		 */
@@ -81,8 +83,8 @@ namespace LNE.LabStreamingLayer
 		}
 
 		protected virtual void FixedUpdate()
-		{
-			if (_sampleRate == 0)
+		{ 
+			if (_sampleRate == VARIABLE_SRATE)
 				return;
 
 			var updateCount = Mathf.RoundToInt(Time.fixedTime / Time.fixedDeltaTime);

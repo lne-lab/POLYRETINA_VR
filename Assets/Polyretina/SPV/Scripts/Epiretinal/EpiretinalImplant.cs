@@ -107,6 +107,9 @@ namespace LNE.ProstheticVision
 
 		public override void Start()
 		{
+			var s1 = Shader.Find("LNE/Phospherisation (MRT)");
+			var s2 = Shader.Find("LNE/Tail Distortion (w/ Blur)");
+
 			// load shaders
 			phosMRT = new Material(Shader.Find("LNE/Phospherisation (MRT)"));
 			tailBlr = new Material(Shader.Find("LNE/Tail Distortion (w/ Blur)"));
@@ -197,17 +200,25 @@ namespace LNE.ProstheticVision
 			fadeRT.Initialise(new Color(1, 0, 0, 0));
 		}
 
+		public void RecenterEyeGaze()
+		{
+			// eye gaze
+			var eyeGaze = EyeGaze.Get(EyeGaze.Source.None, headset);
+			phosMRT.SetVector(SP.eyeGaze, eyeGaze);
+			tailBlr.SetVector(SP.eyeGaze, eyeGaze);
+
+			// eye gaze delta
+			phosMRT.SetVector(SP.eyeGazeDelta, EyeGaze.GetDelta(EyeGaze.Source.None, headset));
+		}
+
 		/*
 		 * Private methods
 		 */
 
 		private void UpdatePerFrameData()
 		{
-			if (offFrames > 0)
-			{
-				// pulse
-				phosMRT.SetInt(SP.pulse, Pulse ? 1 : 0);
-			}
+			// pulse
+			phosMRT.SetInt(SP.pulse, Pulse ? 1 : 0);
 
 			if (useFading)
 			{
@@ -287,7 +298,8 @@ namespace LNE.ProstheticVision
 			phosMRT.SetInt(SP.luminanceLevels, luminanceLevels);
 
 			// luminance boost
-			phosMRT.SetFloat(SP.luminanceBoost, 1 - (luminanceBoost / luminanceLevels));
+			var range = 1 - (1f / luminanceLevels);
+			phosMRT.SetFloat(SP.luminanceBoost, luminanceBoost * range);
 
 			// variance
 			phosMRT.SetFloat(SP.sizeVariance, sizeVariance);

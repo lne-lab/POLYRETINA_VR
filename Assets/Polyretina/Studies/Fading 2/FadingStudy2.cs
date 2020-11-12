@@ -64,7 +64,7 @@ namespace LNE.Studies.FadingV2
 								.Where((word) => word.Length == wordLength)
 								.Randomise(_seed - _trialId);
 
-				return allWords.Subarray(0, 8);
+				return allWords.Subarray(0, rows * columns);
 			}
 		}
 
@@ -77,19 +77,35 @@ namespace LNE.Studies.FadingV2
 
 			var strategyCombos = new[]
 			{
-			Strategy.None,
-			Strategy.Saccade,
-			Strategy.Random,
-			Strategy.Interrupt,
-			Strategy.Saccade | Strategy.Random,
-			Strategy.Saccade | Strategy.Interrupt,
-			Strategy.Random | Strategy.Interrupt,
-			Strategy.Saccade | Strategy.Random | Strategy.Interrupt,
-			Strategy.None | Strategy.EyeTracking,
-			Strategy.None | Strategy.NoFading
-		};
+				Strategy.None,
+				Strategy.Saccade,
+				Strategy.Random,
+				Strategy.Interrupt,
+				Strategy.Saccade | Strategy.Random,
+				Strategy.Saccade | Strategy.Interrupt,
+				Strategy.Random | Strategy.Interrupt,
+				Strategy.Saccade | Strategy.Random | Strategy.Interrupt,
+				Strategy.None | Strategy.EyeTracking,
+				Strategy.None | Strategy.NoFading
+			};
 
-			_strategies = CreateArray(strategyCombos, trialsPerCondition, (s) => s).Randomise(_seed);
+			//_strategies = CreateArray(strategyCombos, trialsPerCondition, (s) => s).Randomise(_seed);
+
+			// new semi-random design >>
+			_strategies = new Strategy[trialsPerCondition * strategyCombos.Length];
+
+			for (int i = 0; i < trialsPerCondition; i++)
+			{
+				var strategiesRandomised = strategyCombos.Randomise(_seed + i);
+
+				for (int j = 0; j < strategiesRandomised.Length; j++)
+				{
+					_strategies[i * strategiesRandomised.Length + j] = strategiesRandomised[j];
+				}
+			}
+			// <<
+
+			_strategies.ForEach((s) => Debug.Log(s));
 
 			_csv = new CSV();
 			_csv.AppendRow("participant", "trial", "strategy", "start time", "end time", "success");
@@ -142,7 +158,11 @@ namespace LNE.Studies.FadingV2
 			// misc stuff
 			SetStrategyParameters();
 			ShowWords();
-			speakers.PlayOneShot(startSound);
+
+			if (_trial.strategy.HasFlag(Strategy.EyeTracking))
+			{
+				speakers.PlayOneShot(startSound);
+			}
 
 			Debug.Log($"Trial {_trialId} starting. Strategy: {_trial.strategy}");
 		}
@@ -161,7 +181,7 @@ namespace LNE.Studies.FadingV2
 			_trials.Add(_trial);
 
 			// misc stuff
-			speakers.PlayOneShot(startSound);
+			//speakers.PlayOneShot(startSound);
 			HideWords();
 
 			// save data
@@ -174,9 +194,16 @@ namespace LNE.Studies.FadingV2
 			// incr
 			_trialId++;
 
-			if (_trialId >= _strategies.Length)
+			// if that was the last trial
+			if (_trialId == _strategies.Length)
 			{
+				// stop the study
 				Application.Quit();
+			}
+			else
+			{
+				// otherwise, start next trial in 2 seconds
+				Invoke(nameof(StartTrial), 2);
 			}
 		}
 
@@ -232,6 +259,11 @@ namespace LNE.Studies.FadingV2
 			implant.eyeGazeSource = _trial.strategy.HasFlag(Strategy.EyeTracking) ?
 									EyeGaze.Source.EyeTracking :
 									EyeGaze.Source.None;
+
+			if (implant.eyeGazeSource == EyeGaze.Source.None)
+			{
+				implant.RecenterEyeGaze();
+			}
 
 			// no fading
 			implant.useFading = !_trial.strategy.HasFlag(Strategy.NoFading);

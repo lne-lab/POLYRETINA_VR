@@ -149,7 +149,10 @@ namespace LNE.IO
 			{
 				while (sr.Peek() >= 0)
 				{
-					AppendRow(sr.ReadLine().Split(Separator));
+					var line = sr.ReadLine();
+					var row = line.Split(Separator);
+
+					AppendRow(row);
 				}
 			}
 
