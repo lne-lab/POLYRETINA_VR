@@ -10,7 +10,7 @@ namespace LNE.ProstheticVision
 
 	public static class EyeGaze
 	{
-		public enum Source { None, EyeTracking, Mouse }
+		public enum Source { None, EyeTracking, Mouse, Custom }
 
 #if VIVE_PRO_EYE
 		private static EyeData_v2 eyeData = new EyeData_v2();
@@ -117,6 +117,8 @@ namespace LNE.ProstheticVision
 			}
 		}
 
+		public static Vector2 Custom { get; set; }
+
 		public static Vector2 LastPosition
 		{
 			get => lastPos;
@@ -149,6 +151,7 @@ namespace LNE.ProstheticVision
 			{
 				case Source.EyeTracking:	return Get(headset);
 				case Source.Mouse:			return Screen;
+				case Source.Custom:			return Custom;
 				case Source.None:			return Vector2.zero;
 				default:					return Vector2.zero;
 			}

@@ -32,6 +32,14 @@ namespace LNE.ProstheticVision
 							edgeThreshold		= Shader.PropertyToID("_threshold"),
 							fadeTexture			= Shader.PropertyToID("_fade_tex"),
 							eyeGazeDelta		= Shader.PropertyToID("_eye_gaze_delta"),
-							luminanceBoost		= Shader.PropertyToID("_luminance_boost");
+							luminanceBoost		= Shader.PropertyToID("_luminance_boost"),
+							fastDecayTime		= Shader.PropertyToID("_fast_decay_time"),
+							slowDecayTime		= Shader.PropertyToID("_slow_decay_time"),
+							decayThreshold		= Shader.PropertyToID("_decay_threshold"),
+							fastDecayRate		= Shader.PropertyToID("_fast_decay_rate"),
+							slowDecayRate		= Shader.PropertyToID("_slow_decay_rate"),
+							recoveryDelay		= Shader.PropertyToID("_recovery_delay"),
+							recoveryTime		= Shader.PropertyToID("_recovery_time"),
+							recoveryExponent	= Shader.PropertyToID("_recovery_exponent");
 	}
 }

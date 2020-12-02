@@ -87,9 +87,19 @@ namespace LNE.PostProcessing
 			Material.SetFloat(propertyId, value);
 		}
 
+		public void SetFloat(string propertyName, float value)
+		{
+			Material.SetFloat(propertyName, value);
+		}
+
 		public void SetInt(int propertyId, int value)
 		{
 			Material.SetInt(propertyId, value);
+		}
+
+		public void SetInt(string propertyName, int value)
+		{
+			Material.SetInt(propertyName, value);
 		}
 
 		public void SetTexture(int propertyId, Texture value)
@@ -97,9 +107,19 @@ namespace LNE.PostProcessing
 			Material.SetTexture(propertyId, value);
 		}
 
+		public void SetTexture(string propertyName, Texture value)
+		{
+			Material.SetTexture(propertyName, value);
+		}
+
 		public void SetVector(int propertyId, Vector4 value)
 		{
 			Material.SetVector(propertyId, value);
+		}
+
+		public void SetVector(string propertyName, Vector4 value)
+		{
+			Material.SetVector(propertyName, value);
 		}
 	}
 }

@@ -37,25 +37,28 @@
                 return o;
             }
 
+            static const float SIZE = 20.0;    //def=5.0
+            static const float GIRTH = SIZE / 10.0;
+
             sampler2D _MainTex;
             float2 _target_pixel;
 
-            float4 frag (v2f i) : SV_Target
+            float4 frag(v2f i) : SV_Target
             {
                 float4 col = tex2D(_MainTex, i.uv);
                 float2 current_pixel = i.uv * _ScreenParams.xy;
 
-                if (current_pixel.x < _target_pixel.x + .5 && current_pixel.x > _target_pixel.x - .5)
+                if (current_pixel.x < _target_pixel.x + GIRTH && current_pixel.x > _target_pixel.x - GIRTH)
                 {
-                    if (current_pixel.y < _target_pixel.y + 5 && current_pixel.y > _target_pixel.y - 5)
+                    if (current_pixel.y < _target_pixel.y + SIZE && current_pixel.y > _target_pixel.y - SIZE)
                     {
                         col.xyz = float3(1, 0, 0);
                     }
                 }
 
-                if (current_pixel.y < _target_pixel.y + .5 && current_pixel.y > _target_pixel.y - .5)
+                if (current_pixel.y < _target_pixel.y + GIRTH && current_pixel.y > _target_pixel.y - GIRTH)
                 {
-                    if (current_pixel.x < _target_pixel.x + 5 && current_pixel.x > _target_pixel.x - 5)
+                    if (current_pixel.x < _target_pixel.x + SIZE && current_pixel.x > _target_pixel.x - SIZE)
                     {
                         col.xyz = float3(1, 0, 0);
                     }

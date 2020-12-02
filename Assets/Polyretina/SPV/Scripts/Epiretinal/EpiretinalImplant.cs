@@ -107,9 +107,6 @@ namespace LNE.ProstheticVision
 
 		public override void Start()
 		{
-			var s1 = Shader.Find("LNE/Phospherisation (MRT)");
-			var s2 = Shader.Find("LNE/Tail Distortion (w/ Blur)");
-
 			// load shaders
 			phosMRT = new Material(Shader.Find("LNE/Phospherisation (MRT)"));
 			tailBlr = new Material(Shader.Find("LNE/Tail Distortion (w/ Blur)"));
@@ -200,17 +197,6 @@ namespace LNE.ProstheticVision
 			fadeRT.Initialise(new Color(1, 0, 0, 0));
 		}
 
-		public void RecenterEyeGaze()
-		{
-			// eye gaze
-			var eyeGaze = EyeGaze.Get(EyeGaze.Source.None, headset);
-			phosMRT.SetVector(SP.eyeGaze, eyeGaze);
-			tailBlr.SetVector(SP.eyeGaze, eyeGaze);
-
-			// eye gaze delta
-			phosMRT.SetVector(SP.eyeGazeDelta, EyeGaze.GetDelta(EyeGaze.Source.None, headset));
-		}
-
 		/*
 		 * Private methods
 		 */
@@ -226,16 +212,13 @@ namespace LNE.ProstheticVision
 				phosMRT.SetTexture(SP.fadeTexture, fadeRT.Back);
 			}
 
-			if (eyeGazeSource != EyeGaze.Source.None)
-			{
-				// eye gaze
-				var eyeGaze = EyeGaze.Get(eyeGazeSource, headset);
-				phosMRT.SetVector(SP.eyeGaze, eyeGaze);
-				tailBlr.SetVector(SP.eyeGaze, eyeGaze);
+			// eye gaze
+			var eyeGaze = EyeGaze.Get(eyeGazeSource, headset);
+			phosMRT.SetVector(SP.eyeGaze, eyeGaze);
+			tailBlr.SetVector(SP.eyeGaze, eyeGaze);
 
-				// eye gaze delta
-				phosMRT.SetVector(SP.eyeGazeDelta, EyeGaze.GetDelta(eyeGazeSource, headset));
-			}
+			// eye gaze delta
+			phosMRT.SetVector(SP.eyeGazeDelta, EyeGaze.GetDelta(eyeGazeSource, headset));
 		}
 
 		private void UpdatePerChangeData()
@@ -322,19 +305,19 @@ namespace LNE.ProstheticVision
 
 		private void UpdateDecayParameters(float fastTime, float slowTime, float threshold)
 		{
-			phosMRT.SetFloat("_fast_decay_time", fastTime);
-			phosMRT.SetFloat("_slow_decay_time", slowTime);
-			phosMRT.SetFloat("_decay_threshold", threshold);
+			phosMRT.SetFloat(SP.fastDecayTime, fastTime);
+			phosMRT.SetFloat(SP.slowDecayTime, slowTime);
+			phosMRT.SetFloat(SP.decayThreshold, threshold);
 
-			phosMRT.SetFloat("_fast_decay_rate", (1 / fastTime) * (1 - threshold));
-			phosMRT.SetFloat("_slow_decay_rate", (1 / slowTime) * threshold);
+			phosMRT.SetFloat(SP.fastDecayRate, (1 / fastTime) * (1 - threshold));
+			phosMRT.SetFloat(SP.slowDecayRate, (1 / slowTime) * threshold);
 		}
 
 		private void UpdateRecoveryParameters(float delay, float time, float exponent)
 		{
-			phosMRT.SetFloat("_recovery_delay", delay);
-			phosMRT.SetFloat("_recovery_time", time);
-			phosMRT.SetFloat("_recovery_exponent", exponent);
+			phosMRT.SetFloat(SP.recoveryDelay, delay);
+			phosMRT.SetFloat(SP.recoveryTime, time);
+			phosMRT.SetFloat(SP.recoveryExponent, exponent);
 		}
 
 		private void UpdateKeyword(string keyword, bool condition)
