@@ -20,6 +20,9 @@ namespace LNE.Studies
 			public string itemName;
 			public bool result;
 			public float elapsedTime;
+
+			public string startTime;
+			public string endTime;
 		}
 	}
 }

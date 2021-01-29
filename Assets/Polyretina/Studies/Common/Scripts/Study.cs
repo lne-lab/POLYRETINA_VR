@@ -73,20 +73,10 @@ namespace LNE.Studies
 		private Step currentStep;
 
 		/*
-		 * Protected / Private properties
+		 * Public / Protected / Private properties
 		 */
 
-		protected int numConditions
-		{
-			get
-			{
-				return _electrodeLayouts.Length * _visualAngles.Length * _tailLengths.Length * _fieldOfViews.Length;
-			}
-		}
-
-		private EpiretinalImplant implant => Prosthesis.Instance.Implant as EpiretinalImplant;
-
-		private object currentItem
+		public object currentItem
 		{
 			get
 			{
@@ -94,7 +84,7 @@ namespace LNE.Studies
 			}
 		}
 
-		private ElectrodeLayout currentElectrodeLayout
+		public ElectrodeLayout currentElectrodeLayout
 		{
 			get
 			{
@@ -107,7 +97,7 @@ namespace LNE.Studies
 			}
 		}
 
-		private float currentVisualAngle
+		public float currentVisualAngle
 		{
 			get
 			{
@@ -120,7 +110,7 @@ namespace LNE.Studies
 			}
 		}
 
-		private float currentTailLength
+		public float currentTailLength
 		{
 			get
 			{
@@ -133,7 +123,7 @@ namespace LNE.Studies
 			}
 		}
 
-		private float currentFieldOfView
+		public float currentFieldOfView
 		{
 			get
 			{
@@ -146,13 +136,23 @@ namespace LNE.Studies
 			}
 		}
 
+		protected int numConditions
+		{
+			get
+			{
+				return _electrodeLayouts.Length * _visualAngles.Length * _tailLengths.Length * _fieldOfViews.Length;
+			}
+		}
+
+		private EpiretinalImplant implant => Prosthesis.Instance.Implant as EpiretinalImplant;
+
 		private string path
 		{
 			get
 			{
-				return	_saveLocation + "/" +																							// directory
-						_identifier.ToString() + "_" + _session.ToString() + "_" + data.date + "_" + data.startTime.Replace(':', '-') +	// filename
-						".json";																										// extension
+				return _saveLocation + "/" +                                                                                            // directory
+						_identifier.ToString() + "_" + _session.ToString() + "_" + data.date + "_" + data.startTime.Replace(':', '-') + // filename
+						".json";                                                                                                        // extension
 			}
 		}
 
@@ -190,8 +190,8 @@ namespace LNE.Studies
 
 			data = new StudyData {
 				identifier = _identifier,
-				date = DateTime.Now.ToString("yyyy-MM-dd"),
-				startTime = DateTime.Now.ToString("HH:mm:ss"),
+				date = DateTime.UtcNow.ToString("dd.MM.yyyy"),
+				startTime = DateTime.UtcNow.ToString("HH:mm:ss.ff"),
 				exposures = new StudyData.Exposure[items.Length]
 			};
 		}
@@ -315,7 +315,9 @@ namespace LNE.Studies
 				tailLength = currentTailLength,
 				itemName = GetItemName(),
 				result = answer == KeyCode.Y,
-				elapsedTime = (float)(endTime - startTime).TotalSeconds
+				elapsedTime = (float)(endTime - startTime).TotalSeconds,
+				endTime = endTime.ToUniversalTime().ToString("HH:mm:ss.ff"),
+				startTime = startTime.ToUniversalTime().ToString("HH:mm:ss.ff")
 			};
 		}
 

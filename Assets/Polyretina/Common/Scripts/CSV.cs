@@ -180,7 +180,7 @@ namespace LNE.IO
 		/// <summary>
 		/// Load using a Stream Reader. Safer for large databases.
 		/// </summary>
-		public bool LoadWStream(string path)
+		public bool LoadWStream(string path, bool includeHeader)
 		{
 			if (File.Exists(path) == false)
 				return false;
@@ -189,9 +189,14 @@ namespace LNE.IO
 			{
 				while (sr.Peek() >= 0)
 				{
+					if (includeHeader == false)
+					{
+						sr.ReadLine();
+						includeHeader = true;
+					}
+
 					var line = sr.ReadLine();
 					var row = line.Split(Separator);
-
 					AppendRow(row);
 				}
 			}
@@ -199,6 +204,14 @@ namespace LNE.IO
 			SourcePath = path;
 
 			return true;
+		}
+
+		/// <summary>
+		/// Load using a Stream Reader. Safer for large databases.
+		/// </summary>
+		public bool LoadWStream(string path)
+		{
+			return LoadWStream(path, true);
 		}
 
 		/// <summary>
