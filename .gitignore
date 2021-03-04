@@ -85,11 +85,13 @@ crashlytics-build.properties
 /[Aa]ssets/UnityCam/
 /[Aa]ssets/UnityCam.meta
 
-# Future studies
+# Future studies and Testing
 /[Aa]ssets/Polyretina/Studies/Fading/
 /[Aa]ssets/Polyretina/Studies/Fading.meta
 /[Aa]ssets/Polyretina/Studies/Fading 2/
 /[Aa]ssets/Polyretina/Studies/Fading 2.meta
+/[Aa]ssets/Polyretina/SPV/Testing/
+/[Aa]ssets/Polyretina/SPV/Testing.meta
 
 # Copyrighted assets
 /[Aa]ssets/FoveUnityPlugin/
