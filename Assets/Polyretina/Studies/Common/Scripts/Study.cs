@@ -17,7 +17,7 @@ namespace LNE.Studies
 	/// </summary>
 	public abstract class Study : Singleton<Study>
 	{
-		private enum Step { Start, Showing, Hiding, Answered };
+		public enum Step { Start, Showing, Hiding, Answered };
 
 		/*
 		 * Inspector fields
@@ -56,6 +56,9 @@ namespace LNE.Studies
 		[SerializeField, Range(0, 3)]
 		private float[] _tailLengths;
 
+		[SerializeField]
+		private bool _includeControlCondition;
+
 		/*
 		 * Protected / Private fields
 		 */
@@ -65,16 +68,23 @@ namespace LNE.Studies
 
 		private object[] items;
 		private int[] conditionIndices;
+		private bool[] controlIndices;
 
 		private StudyData data;
+		private DateTime studyStartTime;
 		private DateTime startTime;
 		private DateTime endTime;
+		private DateTime guessTime;
 
 		private Step currentStep;
 
 		/*
 		 * Public / Protected / Private properties
 		 */
+
+		public Step CurrentStep => currentStep;
+
+		public DateTime StudyStartTime => studyStartTime;
 
 		public object currentItem
 		{
@@ -185,6 +195,11 @@ namespace LNE.Studies
 			conditionIndices = ArrayExtensions.CreateArray(items.Length, (i) => i);
 			conditionIndices.Randomise(_identifier + 1);
 
+			controlIndices = ArrayExtensions.CreateArray(items.Length, 
+				(i) => (i >= 0 && i < 10) || (i >= 50 && i < 60) || (i >= 100 && i < 110) || (i >= 150 && i < 160)
+			);
+			controlIndices.Randomise(_identifier + 1);
+
 			AssertConditionParameters();
 			StartSession();
 
@@ -247,6 +262,8 @@ namespace LNE.Studies
 		{
 			if (currentStep == Step.Start)
 			{
+				studyStartTime = DateTime.Now;
+
 				ShowNext();
 			}
 		}
@@ -267,6 +284,20 @@ namespace LNE.Studies
 			if (exposureIndex < items.Length)
 			{
 				instantiatedItem = InstantiateItem(currentItem, currentVisualAngle);
+
+				if (_includeControlCondition)
+				{
+					if (controlIndices[exposureIndex])
+					{
+						implant.on = false;
+						(Prosthesis.Instance.ExternalProcessor as SaccadeSimulator).offTime = 0;
+					}
+					else
+					{
+						implant.on = true;
+						(Prosthesis.Instance.ExternalProcessor as SaccadeSimulator).offTime = .6f;
+					}
+				}
 
 				SetElectrodeLayout(currentElectrodeLayout);
 				SetTailLength(currentTailLength);
@@ -293,6 +324,11 @@ namespace LNE.Studies
 			}
 		}
 
+		public void HidePrevious(float delay)
+		{
+			CallbackManager.InvokeOnce(delay, HidePrevious);
+		}
+
 		public void HidePrevious()
 		{
 			if (UpdateStep(Step.Hiding) == false)
@@ -301,6 +337,11 @@ namespace LNE.Studies
 			endTime = DateTime.Now;
 
 			HideItem();
+		}
+
+		public void SetGuessTime()
+		{
+			guessTime = DateTime.Now;
 		}
 
 		public void SaveAnswer(KeyCode answer)
@@ -316,8 +357,10 @@ namespace LNE.Studies
 				itemName = GetItemName(),
 				result = answer == KeyCode.Y,
 				elapsedTime = (float)(endTime - startTime).TotalSeconds,
-				endTime = endTime.ToUniversalTime().ToString("HH:mm:ss.ff"),
-				startTime = startTime.ToUniversalTime().ToString("HH:mm:ss.ff")
+				startTime = (float)(startTime - studyStartTime).TotalSeconds,
+				endTime = (float)(endTime - studyStartTime).TotalSeconds,
+				guessTime = (float)(guessTime - startTime).TotalSeconds,
+				isControl = controlIndices[exposureIndex]
 			};
 		}
 

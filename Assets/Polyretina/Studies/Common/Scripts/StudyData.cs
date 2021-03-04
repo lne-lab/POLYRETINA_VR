@@ -21,8 +21,10 @@ namespace LNE.Studies
 			public bool result;
 			public float elapsedTime;
 
-			public string startTime;
-			public string endTime;
+			public float startTime;
+			public float endTime;
+			public float guessTime;
+			public bool isControl;
 		}
 	}
 }

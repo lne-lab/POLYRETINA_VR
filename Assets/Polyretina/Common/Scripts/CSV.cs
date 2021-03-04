@@ -103,7 +103,18 @@ namespace LNE.IO
 			}
 			else if (typeof(T) == typeof(int))
 			{
-				return (T)(object)int.Parse(GetCell(x, y));
+				try
+				{
+					var cell = GetCell(x, y);
+					return (T)(object)int.Parse(cell);
+				}
+				catch
+				{
+					Debug.Log($"{x}, {y}, {GetCell(x, y)}");
+					throw new System.Exception();
+				}
+
+				//return (T)(object)int.Parse(GetCell(x, y));
 			}
 
 			throw new System.Exception();
